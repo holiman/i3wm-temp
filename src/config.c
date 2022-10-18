@@ -192,7 +192,7 @@ bool load_configuration(const char *override_configpath, config_load_t load_type
         x.child_border = draw_util_hex_to_color(cbackground);  \
     } while (0)
 
-    config.client.got_focused_tab_title = false;
+//    config.client.got_focused_tab_title = false;
     config.client[QUBE_DOM0].background = draw_util_hex_to_color("#c4c4c4");
     INIT_COLOR(config.client[QUBE_DOM0].focused,
         "#f7f7f7", "#f5f5f5", "#000000", "#0a0a0a");

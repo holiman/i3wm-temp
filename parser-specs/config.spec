@@ -360,7 +360,7 @@ state COLOR_INDICATOR:
 
 state COLOR_CHILD_BORDER:
   child_border = word
-      -> call cfg_color($colorclass, $border, $background, $text, $indicator, $child_border)
+      -> call cfg_color($colorclass, $qubelabel, $border, $background, $text, $indicator, $child_border)
   end
       -> call cfg_color($colorclass, $qubelabel, $border, $background, $text, $indicator, NULL)
 

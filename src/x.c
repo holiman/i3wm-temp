@@ -506,7 +506,7 @@ void x_draw_decoration(Con *con) {
     } else if (con == focused || con_inside_focused(con)) {
         p->color = &config.client[label].focused;
     } else if (con == TAILQ_FIRST(&(parent->focus_head))) {
-        if (config.client.got_focused_tab_title && !leaf && con_descend_focused(con) == focused) {
+        if (config.client[label].got_focused_tab_title && !leaf && con_descend_focused(con) == focused) {
             /* Stacked/tabbed parent of focused container */
             p->color = &config.client[label].focused_tab_title;
         } else {
@@ -632,8 +632,6 @@ void x_draw_decoration(Con *con) {
     /* 6: draw the icon and title */
     int text_offset_y = (con->deco_rect.height - config.font.height) / 2;
 
-    struct Window *win = con->window;
-
     const int deco_width = (int)con->deco_rect.width;
     const int title_padding = logical_px(2);
 
@@ -675,7 +673,7 @@ void x_draw_decoration(Con *con) {
     }
 
     i3String *title = NULL;
-    struct Window *win = con->window;
+
     if (win == NULL) {
         if (con->title_format == NULL) {
             char *_title;
