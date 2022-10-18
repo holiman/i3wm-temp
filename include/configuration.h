@@ -243,7 +243,7 @@ struct Config {
         struct Colortriple urgent;
         struct Colortriple placeholder;
         bool got_focused_tab_title;
-    } client;
+    } client[QUBE_NUM_LABELS];
     struct config_bar {
         struct Colortriple focused;
         struct Colortriple unfocused;

@@ -41,6 +41,21 @@ void window_update_name(i3Window *win, xcb_get_property_reply_t *prop);
 void window_update_name_legacy(i3Window *win, xcb_get_property_reply_t *prop);
 
 /**
+ * Updates the qubes vmname by using _QUBES_VMNAME (encoded in UTF-8) for the given
+ * window.
+ *
+ */
+void window_update_qubes_vmname(i3Window *win, xcb_get_property_reply_t *prop, bool before_mgmt);
+
+/**
+ * Updates the qubes label by using _QUBES_LABEL (encoded in UTF-8) for the given
+ * window.
+ *
+ */
+void window_update_qubes_label(i3Window *win, xcb_get_property_reply_t *prop, bool before_mgmt);
+
+
+/**
  * Updates the CLIENT_LEADER (logical parent window).
  *
  */

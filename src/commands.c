@@ -701,23 +701,7 @@ void cmd_resize_set(I3_CMD, long cwidth, const char *mode_width, long cheight, c
 }
 
 static int border_width_from_style(border_style_t border_style, long border_width, Con *con) {
-    if (border_style == BS_NONE) {
-        return 0;
-    }
-    if (border_width >= 0) {
-        return logical_px(border_width);
-    }
-
-    const bool is_floating = con_inside_floating(con) != NULL;
-    /* Load the configured defaults. */
-    if (is_floating && border_style == config.default_floating_border) {
-        return config.default_floating_border_width;
-    } else if (!is_floating && border_style == config.default_border) {
-        return config.default_border_width;
-    } else {
-        /* Use some hardcoded values. */
-        return logical_px(border_style == BS_NORMAL ? 2 : 1);
-    }
+    return 3;
 }
 
 /*

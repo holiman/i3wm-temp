@@ -57,7 +57,7 @@ state INITIAL:
   colorclass = 'client.background'
       -> COLOR_SINGLE
   colorclass = 'client.focused_inactive', 'client.focused_tab_title', 'client.focused', 'client.unfocused', 'client.urgent', 'client.placeholder'
-      -> COLOR_BORDER
+      -> COLOR_QUBE
 
 # We ignore comments and 'set' lines (variables).
 state IGNORE_LINE:
@@ -336,6 +336,10 @@ state COLOR_SINGLE:
       -> call cfg_color_single($colorclass, $color)
 
 # colorclass border background text indicator
+state COLOR_QUBE:
+  qubelabel = word
+      -> COLOR_BORDER
+
 state COLOR_BORDER:
   border = word
       -> COLOR_BACKGROUND
@@ -352,13 +356,13 @@ state COLOR_INDICATOR:
   indicator = word
       -> COLOR_CHILD_BORDER
   end
-      -> call cfg_color($colorclass, $border, $background, $text, NULL, NULL)
+      -> call cfg_color($colorclass, $qubelabel, $border, $background, $text, NULL, NULL)
 
 state COLOR_CHILD_BORDER:
   child_border = word
       -> call cfg_color($colorclass, $border, $background, $text, $indicator, $child_border)
   end
-      -> call cfg_color($colorclass, $border, $background, $text, $indicator, NULL)
+      -> call cfg_color($colorclass, $qubelabel, $border, $background, $text, $indicator, NULL)
 
 # <exec|exec_always> [--no-startup-id] command
 state EXEC:

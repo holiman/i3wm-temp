@@ -113,7 +113,7 @@ void manage_window(xcb_window_t window, xcb_get_window_attributes_cookie_t cooki
     xcb_get_window_attributes_reply_t *attr = NULL;
 
     xcb_get_property_cookie_t wm_type_cookie, strut_cookie, state_cookie,
-        utf8_title_cookie, title_cookie,
+        utf8_title_cookie, title_cookie, qubes_vmname_cookie, qubes_label_cookie,
         class_cookie, leader_cookie, transient_cookie,
         role_cookie, startup_id_cookie, wm_hints_cookie,
         wm_normal_hints_cookie, motif_wm_hints_cookie, wm_user_time_cookie, wm_desktop_cookie,
@@ -181,6 +181,8 @@ void manage_window(xcb_window_t window, xcb_get_window_attributes_cookie_t cooki
     strut_cookie = GET_PROPERTY(A__NET_WM_STRUT_PARTIAL, UINT32_MAX);
     state_cookie = GET_PROPERTY(A__NET_WM_STATE, UINT32_MAX);
     utf8_title_cookie = GET_PROPERTY(A__NET_WM_NAME, 128);
+    qubes_vmname_cookie = GET_PROPERTY(A__QUBES_VMNAME, 128);
+    qubes_label_cookie = GET_PROPERTY(A__QUBES_LABEL, UINT32_MAX);
     leader_cookie = GET_PROPERTY(A_WM_CLIENT_LEADER, UINT32_MAX);
     transient_cookie = GET_PROPERTY(XCB_ATOM_WM_TRANSIENT_FOR, UINT32_MAX);
     title_cookie = GET_PROPERTY(XCB_ATOM_WM_NAME, 128);
@@ -208,6 +210,8 @@ void manage_window(xcb_window_t window, xcb_get_window_attributes_cookie_t cooki
     window_update_name_legacy(cwindow, xcb_get_property_reply(conn, title_cookie, NULL));
     window_update_name(cwindow, xcb_get_property_reply(conn, utf8_title_cookie, NULL));
     window_update_icon(cwindow, xcb_get_property_reply(conn, wm_icon_cookie, NULL));
+    window_update_qubes_vmname(cwindow, xcb_get_property_reply(conn, qubes_vmname_cookie, NULL), true);
+    window_update_qubes_label(cwindow, xcb_get_property_reply(conn, qubes_label_cookie, NULL), true);
     window_update_leader(cwindow, xcb_get_property_reply(conn, leader_cookie, NULL));
     window_update_transient_for(cwindow, xcb_get_property_reply(conn, transient_cookie, NULL));
     window_update_strut_partial(cwindow, xcb_get_property_reply(conn, strut_cookie, NULL));

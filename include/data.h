@@ -146,6 +146,24 @@ typedef enum {
 } focus_wrapping_t;
 
 /**
+ * Qubes colors
+ */
+typedef enum {
+    QUBE_DOM0 = 0,
+    QUBE_RED = 1,
+    QUBE_ORANGE = 2,
+    QUBE_YELLOW = 3,
+    QUBE_GREEN = 4,
+    QUBE_GRAY = 5,
+    QUBE_BLUE = 6,
+    QUBE_PURPLE = 7,
+    QUBE_BLACK = 8,
+} qube_label_t;
+
+#define QUBE_NUM_LABELS 9
+
+
+/**
  * Stores a rectangle, for example the size of a window, the child window etc.
  *
  * Note that x and y can contain signed values in some cases (for example when
@@ -410,6 +428,12 @@ struct Window {
 
     /** The name of the window. */
     i3String *name;
+
+    /** The name of the qubes vm. */
+    i3String *qubes_vmname;
+
+    /** The qubes label. */
+    int qubes_label;
 
     /** The WM_WINDOW_ROLE of this window (for example, the pidgin buddy window
      * sets "buddy list"). Useful to match specific windows in assignments or

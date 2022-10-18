@@ -136,6 +136,63 @@ void window_update_name_legacy(i3Window *win, xcb_get_property_reply_t *prop) {
 }
 
 /*
+ * Updates the qubes vmname by using _QUBES_VMNAME (encoded in UTF-8) for the given
+ * window.
+ *
+ */
+void window_update_qubes_vmname(i3Window *win, xcb_get_property_reply_t *prop, bool before_mgmt) {
+    if (prop == NULL || xcb_get_property_value_length(prop) == 0) {
+        win->qubes_vmname = i3string_from_utf8("dom0");
+        FREE(prop);
+        return;
+    }
+
+    i3string_free(win->qubes_vmname);
+
+    /* Truncate the name at the first zero byte. See i3 #3515. */
+    const int len = xcb_get_property_value_length(prop);
+    char *qubes_vmname = sstrndup(xcb_get_property_value(prop), len);
+    win->qubes_vmname = i3string_from_utf8(qubes_vmname);
+    free(qubes_vmname);
+
+    LOG("_QUBES_VMNAME set to \"%s\"\n", i3string_as_utf8(win->qubes_vmname));
+
+    if (before_mgmt) {
+        free(prop);
+        return;
+    }
+
+    run_assignments(win);
+
+    free(prop);
+}
+
+/*
+ * Updates the qubes label by using _QUBES_LABEL (encoded in UTF-8) for the given
+ * window.
+ *
+ */
+void window_update_qubes_label(i3Window *win, xcb_get_property_reply_t *prop, bool before_mgmt) {
+    if (prop == NULL || xcb_get_property_value_length(prop) == 0) {
+        win->qubes_label = 0;
+        FREE(prop);
+        return;
+    }
+
+    win->qubes_label = *(int*) xcb_get_property_value(prop);
+
+    if (before_mgmt) {
+        free(prop);
+        return;
+    }
+
+    run_assignments(win);
+
+    free(prop);
+}
+
+
+/*
  * Updates the CLIENT_LEADER (logical parent window).
  *
  */

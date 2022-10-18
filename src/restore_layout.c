@@ -128,8 +128,8 @@ void restore_connect(void) {
 }
 
 static void update_placeholder_contents(placeholder_state *state) {
-    const color_t foreground = config.client.placeholder.text;
-    const color_t background = config.client.placeholder.background;
+    const color_t foreground = config.client[QUBE_DOM0].placeholder.text;
+    const color_t background = config.client[QUBE_DOM0].placeholder.background;
 
     draw_util_clear_surface(&(state->surface), background);
 
@@ -197,7 +197,7 @@ static void open_placeholder_window(Con *con) {
             true,
             XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK,
             (uint32_t[]){
-                config.client.placeholder.background.colorpixel,
+                config.client[QUBE_DOM0].placeholder.background.colorpixel,
                 XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY,
             });
         /* Make i3 not focus this window. */

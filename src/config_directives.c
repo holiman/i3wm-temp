@@ -462,40 +462,65 @@ CFGFUN(popup_during_fullscreen, const char *value) {
 
 CFGFUN(color_single, const char *colorclass, const char *color) {
     /* used for client.background only currently */
-    config.client.background = draw_util_hex_to_color(color);
+    config.client[QUBE_DOM0].background = draw_util_hex_to_color(color);
 }
 
-CFGFUN(color, const char *colorclass, const char *border, const char *background, const char *text, const char *indicator, const char *child_border) {
-#define APPLY_COLORS(classname)                                                                              \
+CFGFUN(color, const char *colorclass, const char *qubelabel, const char *border, const char *background, const char *text, const char *indicator, const char *child_border) {
+#define APPLY_COLORS(classname, label)                                                                              \
     do {                                                                                                     \
         if (strcmp(colorclass, "client." #classname) == 0) {                                                 \
             if (strcmp("focused_tab_title", #classname) == 0) {                                              \
-                config.client.got_focused_tab_title = true;                                                  \
+                config.client[label].got_focused_tab_title = true;                                                  \
                 if (indicator || child_border) {                                                             \
                     ELOG("indicator and child_border colors have no effect for client.focused_tab_title\n"); \
                 }                                                                                            \
             }                                                                                                \
-            config.client.classname.border = draw_util_hex_to_color(border);                                 \
-            config.client.classname.background = draw_util_hex_to_color(background);                         \
-            config.client.classname.text = draw_util_hex_to_color(text);                                     \
+            config.client[label].classname.border = draw_util_hex_to_color(border);                                 \
+            config.client[label].classname.background = draw_util_hex_to_color(background);                         \
+            config.client[label].classname.text = draw_util_hex_to_color(text);                                     \
             if (indicator != NULL) {                                                                         \
-                config.client.classname.indicator = draw_util_hex_to_color(indicator);                       \
+                config.client[label].classname.indicator = draw_util_hex_to_color(indicator);                       \
             }                                                                                                \
             if (child_border != NULL) {                                                                      \
-                config.client.classname.child_border = draw_util_hex_to_color(child_border);                 \
+                config.client[label].classname.child_border = draw_util_hex_to_color(child_border);                 \
             } else {                                                                                         \
-                config.client.classname.child_border = config.client.classname.background;                   \
+                config.client[label].classname.child_border = config.client[label].classname.background;                   \
             }                                                                                                \
             return;                                                                                          \
         }                                                                                                    \
     } while (0)
 
-    APPLY_COLORS(focused_inactive);
-    APPLY_COLORS(focused_tab_title);
-    APPLY_COLORS(focused);
-    APPLY_COLORS(unfocused);
-    APPLY_COLORS(urgent);
-    APPLY_COLORS(placeholder);
+    int valid_color = 1;
+    qube_label_t label = QUBE_DOM0;
+    if (strcmp(qubelabel, "dom0") == 0) {
+        label = QUBE_DOM0;
+    } else if (strcmp(qubelabel, "red") == 0) {
+        label = QUBE_RED;
+    } else if (strcmp(qubelabel, "orange") == 0) {
+        label = QUBE_ORANGE;
+    } else if (strcmp(qubelabel, "yellow") == 0) {
+        label = QUBE_YELLOW;
+    } else if (strcmp(qubelabel, "green") == 0) {
+        label = QUBE_GREEN;
+    } else if (strcmp(qubelabel, "gray") == 0) {
+        label = QUBE_GRAY;
+    } else if (strcmp(qubelabel, "blue") == 0) {
+        label = QUBE_BLUE;
+    } else if (strcmp(qubelabel, "purple") == 0) {
+        label = QUBE_PURPLE;
+    } else if (strcmp(qubelabel, "black") == 0) {
+        label = QUBE_BLACK;
+    } else {
+        valid_color = 0;
+    }
+
+    if (valid_color) {
+        APPLY_COLORS(focused_inactive, label);
+        APPLY_COLORS(focused, label);
+        APPLY_COLORS(unfocused, label);
+        APPLY_COLORS(urgent, label);
+    }
+
 
 #undef APPLY_COLORS
 }

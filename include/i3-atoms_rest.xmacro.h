@@ -22,4 +22,6 @@ xmacro(_NET_REQUEST_FRAME_EXTENTS) \
 xmacro(_NET_FRAME_EXTENTS) \
 xmacro(_MOTIF_WM_HINTS) \
 xmacro(WM_CHANGE_STATE) \
+xmacro(_QUBES_VMNAME) \
+xmacro(_QUBES_LABEL) \
 xmacro(MANAGER)

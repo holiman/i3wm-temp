@@ -67,7 +67,7 @@ CFGFUN(ipc_socket, const char *path);
 CFGFUN(ipc_kill_timeout, const long timeout_ms);
 CFGFUN(restart_state, const char *path);
 CFGFUN(popup_during_fullscreen, const char *value);
-CFGFUN(color, const char *colorclass, const char *border, const char *background, const char *text, const char *indicator, const char *child_border);
+CFGFUN(color, const char *colorclass, const char *labelqube, const char *border, const char *background, const char *text, const char *indicator, const char *child_border);
 CFGFUN(color_single, const char *colorclass, const char *color);
 CFGFUN(floating_modifier, const char *modifiers);
 CFGFUN(default_border, const char *windowtype, const char *border, const long width);

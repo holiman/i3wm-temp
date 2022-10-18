@@ -489,20 +489,31 @@ void x_draw_decoration(Con *con) {
     /* 1: build deco_params and compare with cache */
     struct deco_render_params *p = scalloc(1, sizeof(struct deco_render_params));
 
+    /* Find out which Qubes label to use */
+    qube_label_t label = QUBE_DOM0;
+    struct Window *win = con->window;
+    if (win != NULL) {
+        DLOG("con->qubes_label is %d\n", win->qubes_label);
+        if (win->qubes_label >= 0 && win->qubes_label < QUBE_NUM_LABELS) {
+            label = win->qubes_label;
+        }
+    }
+
+
     /* find out which colors to use */
     if (con->urgent) {
-        p->color = &config.client.urgent;
+        p->color = &config.client[label].urgent;
     } else if (con == focused || con_inside_focused(con)) {
-        p->color = &config.client.focused;
+        p->color = &config.client[label].focused;
     } else if (con == TAILQ_FIRST(&(parent->focus_head))) {
         if (config.client.got_focused_tab_title && !leaf && con_descend_focused(con) == focused) {
             /* Stacked/tabbed parent of focused container */
-            p->color = &config.client.focused_tab_title;
+            p->color = &config.client[label].focused_tab_title;
         } else {
-            p->color = &config.client.focused_inactive;
+            p->color = &config.client[label].focused_inactive;
         }
     } else {
-        p->color = &config.client.unfocused;
+        p->color = &config.client[label].unfocused;
     }
 
     p->border_style = con_border_style(con);
@@ -512,7 +523,7 @@ void x_draw_decoration(Con *con) {
     p->con_rect = (struct width_height){r->width, r->height};
     p->con_window_rect = (struct width_height){w->width, w->height};
     p->con_deco_rect = con->deco_rect;
-    p->background = config.client.background;
+    p->background = config.client[QUBE_DOM0].background;
     p->con_is_leaf = con_is_leaf(con);
     p->parent_layout = con->parent->layout;
 
@@ -547,16 +558,16 @@ void x_draw_decoration(Con *con) {
         draw_util_clear_surface(&(con->frame_buffer), (color_t){.red = 0.0, .green = 0.0, .blue = 0.0});
 
         /* top area */
-        draw_util_rectangle(&(con->frame_buffer), config.client.background,
+        draw_util_rectangle(&(con->frame_buffer), config.client[QUBE_DOM0].background,
                             0, 0, r->width, w->y);
         /* bottom area */
-        draw_util_rectangle(&(con->frame_buffer), config.client.background,
+        draw_util_rectangle(&(con->frame_buffer), config.client[QUBE_DOM0].background,
                             0, w->y + w->height, r->width, r->height - (w->y + w->height));
         /* left area */
-        draw_util_rectangle(&(con->frame_buffer), config.client.background,
+        draw_util_rectangle(&(con->frame_buffer), config.client[QUBE_DOM0].background,
                             0, 0, w->x, r->height);
         /* right area */
-        draw_util_rectangle(&(con->frame_buffer), config.client.background,
+        draw_util_rectangle(&(con->frame_buffer), config.client[QUBE_DOM0].background,
                             w->x + w->width, 0, r->width - (w->x + w->width), r->height);
     }
 
@@ -664,6 +675,7 @@ void x_draw_decoration(Con *con) {
     }
 
     i3String *title = NULL;
+    struct Window *win = con->window;
     if (win == NULL) {
         if (con->title_format == NULL) {
             char *_title;
@@ -682,6 +694,18 @@ void x_draw_decoration(Con *con) {
     if (title == NULL) {
         goto copy_pixmaps;
     }
+
+    /* Set Qubes window title only when the container has a title and contains
+     * a window. */
+    if (win != NULL) {
+        char *title_buf;
+        sasprintf(&title_buf, "[%s] %s", i3string_as_utf8(win->qubes_vmname), i3string_as_utf8(title));
+        if (con->title_format != NULL)
+            I3STRING_FREE(title);
+        title = i3string_from_utf8(title_buf);
+        FREE(title_buf);
+    }
+
 
     /* icon_padding is applied horizontally only, the icon will always use all
      * available vertical space. */
@@ -740,9 +764,7 @@ void x_draw_decoration(Con *con) {
             icon_size);
     }
 
-    if (win == NULL || con->title_format != NULL) {
-        I3STRING_FREE(title);
-    }
+    I3STRING_FREE(title);
 
     x_draw_decoration_after_title(con, p);
 copy_pixmaps:
